@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afterlove</title>
+<link rel="icon" type="image/png" href="MOMO.png">
+<link rel="apple-touch-icon" href="MOMO.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Song+Myung&family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --c1:#D06A86;
+  --c2:#8676C8;
+  --ink:#ECE6F2;
+  --sub:#9A8FAB;
+  --faint:#6A6186;
+  --hair:#312B40;
+  --frame:#0E0B14;
+  --panel:#1E1828;
+  --box:#181222;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{-webkit-text-size-adjust:100%}
+body{font-family:'Noto Sans KR',sans-serif;background:#120D1A;color:var(--ink);
+  min-height:100vh;padding:42px 16px 92px}
+.mono{font-family:'Space Mono','Noto Sans KR',monospace}
+
+.outer{max-width:620px;margin:0 auto}
+.scale-wrap{transform-origin:top center}
+#sheet{background:var(--panel);border:1px solid var(--hair);border-radius:14px;box-shadow:0 16px 46px rgba(0,0,0,.5);overflow:hidden}
+.strip{height:4px;background:linear-gradient(90deg,var(--c1),var(--c2))}
+
+/* ---------- masthead ---------- */
+.mast{padding:40px 46px 26px}
+.kicker{display:flex;align-items:center;justify-content:space-between;
+  font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--sub);margin-bottom:18px}
+.title{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:36px;letter-spacing:.5px;line-height:1.05;color:var(--ink)}
+.tagline{font-size:11.5px;font-weight:300;color:var(--sub);letter-spacing:.4px;margin-top:14px}
+.rule{height:2px;margin-top:22px;background:linear-gradient(90deg,var(--c1) 0 50%,var(--c2) 50% 100%)}
+
+/* subjects */
+.subjects{display:flex;align-items:center;gap:22px;margin-top:24px;flex-wrap:wrap}
+.x-div{font-family:'Playfair Display',serif;font-size:18px;color:var(--faint);flex-shrink:0}
+.subj{display:flex;align-items:center;gap:12px}
+.thumb{width:48px;height:48px;border-radius:3px;position:relative;overflow:hidden;
+  background:#2A2338;flex-shrink:0;user-select:none}
+.th-init{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:20px;color:#6E6582;cursor:pointer;z-index:1}
+.iw{position:absolute;inset:0;overflow:hidden;display:none;z-index:2}
+.iw img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center;cursor:grab;will-change:transform}
+.th-btn{position:absolute;bottom:0;left:0;right:0;height:16px;background:rgba(20,18,20,.46);
+  display:none;align-items:center;justify-content:center;z-index:3;cursor:pointer;
+  font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:.5px;color:rgba(255,255,255,.92);text-transform:uppercase}
+.file{display:none}
+.subj-meta{display:flex;flex-direction:column;gap:6px}
+.name-in{border:none;border-bottom:1.5px solid var(--c1);background:transparent;
+  padding:2px 0;width:110px;outline:none;font-family:'Song Myung',serif;
+  font-size:15px;color:var(--ink)}
+#n2{border-bottom-color:var(--c2)}
+.name-in::placeholder{color:#6E6582;font-family:'Noto Sans KR',sans-serif;font-size:13px}
+.colors{display:flex;align-items:center;gap:5px}
+.sw{width:11px;height:11px;border-radius:2px;cursor:pointer;border:2px solid transparent;
+  transition:transform .14s,border-color .14s;flex-shrink:0}
+.sw:hover{transform:scale(1.25)}.sw.on{border-color:#D8D0E4}
+.custom{width:11px;height:11px;border-radius:2px;border:1px dashed #4A4360;position:relative;
+  overflow:hidden;cursor:pointer;flex-shrink:0}
+.custom input{position:absolute;inset:-50%;width:200%;height:200%;opacity:0;cursor:pointer}
+
+/* ---------- grid ---------- */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 0;
+  border-top:1px solid var(--hair)}
+.cell{padding:24px 28px 28px;border-bottom:1px solid var(--hair)}
+.cell:nth-child(odd){border-right:1px solid var(--hair)}
+.cell:nth-child(1),.cell:nth-child(2){border-top:none}
+.cell:nth-child(3),.cell:nth-child(4){border-bottom:none}
+
+.q-no{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:1px;color:var(--c1)}
+.q-title{font-family:'Song Myung',serif;font-size:19px;letter-spacing:.5px;color:var(--ink);margin:5px 0 7px}
+.q-desc{font-size:11px;font-weight:300;line-height:1.55;color:var(--sub);min-height:34px}
+.q-spec{font-family:'Space Mono','Noto Sans KR',monospace;font-size:9.5px;letter-spacing:.4px;
+  color:var(--faint);margin-top:7px;text-transform:uppercase}
+
+.plot{position:relative;margin:14px auto 0;max-width:208px;padding:16px 32px}
+.chart-box{position:relative;width:100%;aspect-ratio:1/1;border:1px solid var(--hair);background:var(--box);
+  touch-action:none;overflow:hidden}
+.cx-v{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--hair);transform:translateX(-.5px)}
+.cx-h{position:absolute;top:50%;left:0;right:0;height:1px;background:var(--hair);transform:translateY(-.5px)}
+.tick{position:absolute;background:var(--faint)}
+.pole{position:absolute;font-size:10px;font-weight:400;letter-spacing:.4px;color:var(--ink);white-space:nowrap;z-index:3}
+.p-top{top:1px;left:50%;transform:translateX(-50%)}
+.p-bottom{bottom:1px;left:50%;transform:translateX(-50%)}
+.p-left{left:2px;top:50%;transform:translateY(-50%)}
+.p-right{right:2px;top:50%;transform:translateY(-50%)}
+.qdot{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid #fff;
+  transform:translate(-50%,-50%);cursor:grab;box-shadow:0 1px 4px rgba(20,16,20,.3);
+  z-index:6;touch-action:none}
+.qdot.grabbing{cursor:grabbing}
+
+.foot{padding:16px 46px;display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid var(--hair)}
+.foot span{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--faint)}
+
+/* toolbar */
+.toolbar{position:fixed;bottom:0;left:0;right:0;background:rgba(18,13,26,.92);
+  backdrop-filter:blur(14px);border-top:1px solid var(--hair);display:flex;align-items:center;
+  justify-content:center;gap:8px;padding:11px 18px;z-index:200;flex-wrap:wrap}
+.tb-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--sub);text-transform:uppercase}
+.tb-btn{height:30px;padding:0 13px;border:1px solid var(--hair);background:transparent;
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--ink);cursor:pointer;transition:background .14s}
+.tb-btn:hover{background:rgba(255,255,255,.06)}
+.tb-btn.primary{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:none}
+.tb-btn.primary:hover{opacity:.88}
+.zoomv{font-family:'Space Mono',monospace;font-size:11px;color:var(--sub);min-width:42px;text-align:center}
+
+@media(max-width:600px){
+  body{padding:26px 9px 90px}.mast{padding:28px 20px 20px}.title{font-size:29px}
+  .grid{grid-template-columns:1fr}
+  .cell{border-right:none !important;padding:22px 20px 26px}
+  .cell:nth-child(2){border-top:1px solid var(--hair)}
+  .cell:nth-child(3){border-bottom:1px solid var(--hair)}
+  .foot{padding:14px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="outer">
+ <div class="scale-wrap" id="scaleWrap">
+  <div id="sheet">
+   <div class="strip" id="strip"></div>
+
+   <div class="mast">
+     <div class="kicker"><span>after love</span><span id="kno">№ 001</span></div>
+     <div class="title">Afterlove</div>
+     <div class="tagline">사랑이 끝난 자리에 남는 네 개의 좌표</div>
+     <div class="rule" id="rule"></div>
+
+     <div class="subjects">
+       <div class="subj">
+         <div class="thumb" id="av1">
+           <label for="f1" class="th-init" id="ini1">+</label>
+           <div class="iw" id="iw1"><img id="pi1" draggable="false"></div>
+           <label for="f1" class="th-btn" id="ab1">photo</label>
+         </div>
+         <input type="file" accept="image/*" id="f1" class="file" onchange="loadPhoto(1)">
+         <div class="subj-meta">
+           <input class="name-in" id="n1" placeholder="이름 A" maxlength="10" oninput="syncName(1)">
+           <div class="colors">
+             <div class="sws" id="sws1" style="display:flex;gap:5px"></div>
+             <div class="custom"><input type="color" value="#D06A86" oninput="setCustom(1,this.value)"></div>
+           </div>
+         </div>
+       </div>
+
+       <div class="x-div">×</div>
+
+       <div class="subj">
+         <div class="thumb" id="av2">
+           <label for="f2" class="th-init" id="ini2">+</label>
+           <div class="iw" id="iw2"><img id="pi2" draggable="false"></div>
+           <label for="f2" class="th-btn" id="ab2">photo</label>
+         </div>
+         <input type="file" accept="image/*" id="f2" class="file" onchange="loadPhoto(2)">
+         <div class="subj-meta">
+           <input class="name-in" id="n2" placeholder="이름 B" maxlength="10" oninput="syncName(2)">
+           <div class="colors">
+             <div class="sws" id="sws2" style="display:flex;gap:5px"></div>
+             <div class="custom"><input type="color" value="#8676C8" oninput="setCustom(2,this.value)"></div>
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   <div class="grid" id="grid"></div>
+
+   <div class="foot"><span>how you let go</span><span class="mono">drag · place · save</span></div>
+  </div>
+ </div>
+</div>
+
+<div class="toolbar">
+  <span class="tb-label">size</span>
+  <button class="tb-btn" onclick="dz(-.1)">−</button>
+  <span class="zoomv" id="zv">100%</span>
+  <button class="tb-btn" onclick="dz(.1)">+</button>
+  <button class="tb-btn" onclick="rz()">reset</button>
+  <button class="tb-btn primary" onclick="saveImg()">이미지 저장</button>
+</div>
+
+<script>
+const CHARTS=[
+  {no:'01',title:'이별의 방식',desc:'관계를 끝맺는 순간 드러나는 태도',
+   yName:'수용',xName:'표현',top:'체념',bottom:'거부',left:'침묵',right:'폭발'},
+  {no:'02',title:'집착의 형태',desc:'붙잡으려는 마음이 향하는 방향',
+   yName:'지향',xName:'통제',top:'소유',bottom:'헌신',left:'속박',right:'방임'},
+  {no:'03',title:'부재의 감각',desc:'곁에 없는 사람을 견디는 방식',
+   yName:'기억',xName:'행동',top:'망각',bottom:'각인',left:'외면',right:'추적'},
+  {no:'04',title:'재회의 태도',desc:'다시 마주쳤을 때의 마음가짐',
+   yName:'마음',xName:'태세',top:'회피',bottom:'갈망',left:'경계',right:'투항'},
+];
+const PAL={1:['#D06A86','#C85A9A','#D07A6A','#B85070','#A86AC0'],
+           2:['#8676C8','#5A86C0','#5AA0B0','#7A7290','#6AA88A']};
+let zoom=1;
+function cssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+function setColor(n,hex){
+  document.documentElement.style.setProperty('--c'+n,hex);
+  document.getElementById('n'+n).style.borderBottomColor=hex;
+  document.querySelectorAll('.qdot.p'+n).forEach(d=>d.style.background=hex);
+  updateRule();
+}
+function updateRule(){const c1=cssVar('--c1'),c2=cssVar('--c2');
+  document.getElementById('rule').style.background='linear-gradient(90deg,'+c1+' 0 50%,'+c2+' 50% 100%)';
+  const st=document.getElementById('strip');if(st)st.style.background='linear-gradient(90deg,'+c1+','+c2+')';}
+function buildSwatches(){
+  [1,2].forEach(n=>{
+    const wrap=document.getElementById('sws'+n);
+    PAL[n].forEach((hex,i)=>{
+      const s=document.createElement('div');s.className='sw'+(i===0?' on':'');s.style.background=hex;
+      s.onclick=()=>{wrap.querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));s.classList.add('on');setColor(n,hex);};
+      wrap.appendChild(s);
+    });
+  });
+}
+function setCustom(n,hex){document.getElementById('sws'+n).querySelectorAll('.sw').forEach(x=>x.classList.remove('on'));setColor(n,hex);}
+
+function syncName(n){
+  const v=document.getElementById('n'+n).value.trim();
+  document.getElementById('ini'+n).textContent=v?v.charAt(0):'+';
+}
+
+function buildCharts(){
+  const grid=document.getElementById('grid');grid.innerHTML='';
+  CHARTS.forEach(ch=>{
+    const cell=document.createElement('div');cell.className='cell';
+    cell.innerHTML=
+      '<div class="q-no">'+ch.no+'</div>'+
+      '<div class="q-title">'+ch.title+'</div>'+
+      '<div class="q-desc">'+ch.desc+'</div>'+
+      '<div class="q-spec">Y · '+ch.yName+'&nbsp;&nbsp;&nbsp;X · '+ch.xName+'</div>';
+    const plot=document.createElement('div');plot.className='plot';
+    const box=document.createElement('div');box.className='chart-box';
+    box.innerHTML='<div class="cx-v"></div><div class="cx-h"></div>'+
+      '<div class="tick" style="left:50%;top:0;width:1px;height:5px;transform:translateX(-.5px)"></div>'+
+      '<div class="tick" style="left:50%;bottom:0;width:1px;height:5px;transform:translateX(-.5px)"></div>'+
+      '<div class="tick" style="top:50%;left:0;height:1px;width:5px;transform:translateY(-.5px)"></div>'+
+      '<div class="tick" style="top:50%;right:0;height:1px;width:5px;transform:translateY(-.5px)"></div>';
+    [1,2].forEach(p=>{const d=document.createElement('div');d.className='qdot p'+p;d.style.background=cssVar('--c'+p);
+      d.style.left=(p===1?42:58)+'%';d.style.top='50%';dragDot(d);box.appendChild(d);});
+    plot.innerHTML=
+      '<div class="pole p-top">'+ch.top+'</div><div class="pole p-bottom">'+ch.bottom+'</div>'+
+      '<div class="pole p-left">'+ch.left+'</div><div class="pole p-right">'+ch.right+'</div>';
+    plot.appendChild(box);
+    cell.appendChild(plot);
+    grid.appendChild(cell);
+  });
+  sizeBoxes();
+}
+function dragDot(dot){
+  let active=false;
+  const move=(cx,cy)=>{const box=dot.parentElement,r=box.getBoundingClientRect();
+    let fx=(cx-r.left)/r.width,fy=(cy-r.top)/r.height;fx=Math.min(1,Math.max(0,fx));fy=Math.min(1,Math.max(0,fy));
+    dot.style.left=(fx*100)+'%';dot.style.top=(fy*100)+'%';};
+  dot.addEventListener('pointerdown',e=>{active=true;dot.setPointerCapture(e.pointerId);dot.classList.add('grabbing');e.preventDefault();});
+  dot.addEventListener('pointermove',e=>{if(active)move(e.clientX,e.clientY);});
+  const end=()=>{active=false;dot.classList.remove('grabbing');};
+  dot.addEventListener('pointerup',end);dot.addEventListener('pointercancel',end);
+}
+function sizeBoxes(){document.querySelectorAll('.chart-box').forEach(b=>{b.style.height=b.offsetWidth+'px';});}
+window.addEventListener('resize',sizeBoxes);
+
+/* photo */
+const imgState={1:fresh(),2:fresh()};
+function fresh(){return{scale:1,tx:0,ty:0,drag:false,lx:0,ly:0,pinch:false,pd:0};}
+function applyT(n){const s=imgState[n];document.getElementById('pi'+n).style.transform='translate('+s.tx+'px,'+s.ty+'px) scale('+s.scale+')';}
+function setupImg(n){
+  const wrap=document.getElementById('iw'+n),s=imgState[n];
+  wrap.addEventListener('wheel',e=>{e.preventDefault();s.scale=Math.min(5,Math.max(.5,s.scale+(e.deltaY>0?-.12:.12)));applyT(n);},{passive:false});
+  wrap.addEventListener('mousedown',e=>{e.preventDefault();s.drag=true;s.lx=e.clientX;s.ly=e.clientY;});
+  window.addEventListener('mousemove',e=>{if(!s.drag)return;s.tx+=e.clientX-s.lx;s.ty+=e.clientY-s.ly;s.lx=e.clientX;s.ly=e.clientY;applyT(n);});
+  window.addEventListener('mouseup',()=>s.drag=false);
+  wrap.addEventListener('touchstart',e=>{if(e.touches.length===1){s.drag=true;s.lx=e.touches[0].clientX;s.ly=e.touches[0].clientY;}
+    else if(e.touches.length===2){s.pinch=true;s.drag=false;s.pd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);}e.preventDefault();},{passive:false});
+  wrap.addEventListener('touchmove',e=>{e.preventDefault();
+    if(e.touches.length===1&&s.drag){s.tx+=e.touches[0].clientX-s.lx;s.ty+=e.touches[0].clientY-s.ly;s.lx=e.touches[0].clientX;s.ly=e.touches[0].clientY;applyT(n);}
+    else if(e.touches.length===2&&s.pinch){const nd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);s.scale=Math.min(5,Math.max(.5,s.scale*(nd/s.pd)));s.pd=nd;applyT(n);}},{passive:false});
+  wrap.addEventListener('touchend',e=>{if(e.touches.length<2)s.pinch=false;if(e.touches.length===0)s.drag=false;});
+}
+function loadPhoto(n){
+  const f=document.getElementById('f'+n).files[0];if(!f)return;const r=new FileReader();
+  r.onload=e=>{imgState[n]=fresh();const img=document.getElementById('pi'+n);img.style.transform='';img.src=e.target.result;
+    document.getElementById('iw'+n).style.display='block';document.getElementById('ini'+n).style.display='none';
+    document.getElementById('ab'+n).style.display='flex';setupImg(n);};
+  r.readAsDataURL(f);
+}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function getThumbDataURL(n){
+  const iw=document.getElementById('iw'+n),img=document.getElementById('pi'+n),s=imgState[n];
+  if(!img.src||!img.naturalWidth||iw.style.display!=='block')return null;
+  const SIZE=48,R=6,W=SIZE*R;
+  const c=document.createElement('canvas');c.width=W;c.height=W;const ctx=c.getContext('2d');
+  rr(ctx,0,0,W,W,3*R);ctx.clip();
+  const nw=img.naturalWidth,nh=img.naturalHeight,cs=Math.max(SIZE/nw,SIZE/nh),dw=nw*cs*R,dh=nh*cs*R;
+  ctx.save();ctx.translate(W/2+s.tx*R,W/2+s.ty*R);ctx.scale(s.scale,s.scale);ctx.drawImage(img,-dw/2,-dh/2,dw,dh);ctx.restore();
+  return c.toDataURL('image/png');
+}
+
+/* zoom + save */
+function applyZoom(){const sw=document.getElementById('scaleWrap'),sh=document.getElementById('sheet');
+  sw.style.transform='scale('+zoom+')';sw.style.transformOrigin='top center';sw.style.height=(sh.offsetHeight*zoom)+'px';
+  document.getElementById('zv').textContent=Math.round(zoom*100)+'%';}
+function dz(d){zoom=Math.min(1.6,Math.max(.4,+(zoom+d).toFixed(1)));applyZoom();}
+function rz(){zoom=1;applyZoom();}
+
+async function saveImg(){
+  if(typeof html2canvas==='undefined'){alert('라이브러리 로딩 중입니다. 잠시 후 다시 시도하세요.');return;}
+  const btn=document.querySelector('.tb-btn.primary');btn.textContent='저장 중…';btn.disabled=true;
+  await document.fonts.ready;await new Promise(r=>setTimeout(r,80));
+  const sw=document.getElementById('scaleWrap'),sh=document.getElementById('sheet');
+  const c1=cssVar('--c1'),c2=cssVar('--c2');
+  const pT=sw.style.transform,pH=sw.style.height,pW=sh.style.width,pMW=sh.style.minWidth;
+  sw.style.transform='none';sw.style.height='auto';sh.style.width='620px';sh.style.minWidth='620px';
+  await new Promise(r=>requestAnimationFrame(r));sizeBoxes();await new Promise(r=>setTimeout(r,60));
+  const t1=getThumbDataURL(1),t2=getThumbDataURL(2);
+  try{
+    const canvas=await html2canvas(sh,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#1E1828',logging:false,imageTimeout:0,
+      onclone:(doc)=>{
+        doc.documentElement.style.setProperty('--c1',c1);doc.documentElement.style.setProperty('--c2',c2);
+        const sh2=doc.getElementById('sheet');if(sh2){sh2.style.boxShadow='none';sh2.style.borderRadius='0';}
+        const st2=doc.getElementById('strip');if(st2)st2.style.background='linear-gradient(90deg,'+c1+','+c2+')';
+        const rl=doc.getElementById('rule');if(rl)rl.style.background='linear-gradient(90deg,'+c1+' 0 50%,'+c2+' 50% 100%)';
+        doc.querySelectorAll('.colors,.th-btn').forEach(el=>el.style.display='none');
+        [1,2].forEach(n=>{const inp=doc.getElementById('n'+n);if(!inp)return;
+          const div=doc.createElement('div');div.textContent=inp.value||'';
+          div.style.cssText="font-family:'Song Myung',serif;font-size:15px;color:#ECE6F2;padding:2px 0;width:110px;border-bottom:1.5px solid "+(n===1?c1:c2)+";line-height:1.4";
+          inp.parentNode.replaceChild(div,inp);});
+        [1,2].forEach((n,i)=>{
+          const url=[t1,t2][i],iw=doc.getElementById('iw'+n);if(!iw)return;
+          if(url){iw.innerHTML='';iw.style.display='block';const im=doc.createElement('img');im.src=url;
+            im.style.cssText='position:absolute;inset:0;width:48px;height:48px;object-fit:cover';iw.appendChild(im);
+            const ini=doc.getElementById('ini'+n);if(ini)ini.style.display='none';}
+          else if(iw){iw.innerHTML='';iw.style.display='none';}
+        });
+      },
+      ignoreElements:el=>el.classList&&el.classList.contains('toolbar')});
+    const a=document.createElement('a');const nm=(document.getElementById('n1').value||'A')+'x'+(document.getElementById('n2').value||'B');
+    a.download='afterlove-'+nm+'.png';a.href=canvas.toDataURL('image/png');
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  }catch(e){alert('저장 실패: '+(e&&e.message?e.message:e));}
+  finally{sh.style.width=pW;sh.style.minWidth=pMW;sw.style.transform=pT;sw.style.height=pH;btn.textContent='이미지 저장';btn.disabled=false;sizeBoxes();}
+}
+
+buildSwatches();buildCharts();updateRule();syncName(1);syncName(2);
+window.addEventListener('load',()=>{document.fonts.ready.then(sizeBoxes);});
+</script>
+</body>
+</html>
